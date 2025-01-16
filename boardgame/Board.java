@@ -31,4 +31,12 @@ public class Board {
     public void setPieces(Piece[][] pieces) {
         this.pieces = pieces;
     }
+
+    public Piece getPieceWithString(String coordinate) {
+        char col = coordinate.charAt(0);
+        int row = Integer.parseInt(coordinate.substring(1));
+        Position pos = new Position(8 - row, col - 'a');
+        System.out.println(pos.getRow() + " " + pos.getColumn());
+        return getPiece(pos);
+    }
 }

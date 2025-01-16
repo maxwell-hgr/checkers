@@ -4,9 +4,9 @@ public class Position {
     int column;
     int row;
 
-    public Position(int column, int row) {
-        this.column = column;
+    public Position(int row, int column) {
         this.row = row;
+        this.column = column;
     }
 
     public int getColumn() {
