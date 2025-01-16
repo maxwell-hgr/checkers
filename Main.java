@@ -16,6 +16,7 @@ public class Main {
 
         CheckersPiece origin = (CheckersPiece) checkersMatch.getBoard().getPieceWithString(input);
         System.out.println(origin);
+        origin.setChecker(true);
 
         GUI.printPossibleMoves(checkersMatch.getBoard(), origin);
 

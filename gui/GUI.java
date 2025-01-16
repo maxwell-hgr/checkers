@@ -20,9 +20,9 @@ public class GUI {
 
             for (Piece piece : row) {
                 if (piece != null) {
-                    System.out.print(piece + " ");
+                    System.out.print(piece + "-");
                 } else {
-                    System.out.print("  ");
+                    System.out.print(" -");
                 }
             }
             rows--;
@@ -31,7 +31,7 @@ public class GUI {
     }
 
     public static void printPossibleMoves(Board board, CheckersPiece origin) {
-        boolean[][] possibleMoves = origin.simpleMoves(board);
+        boolean[][] possibleMoves = origin.possibleMoves(board);
         Piece[][] pieces = board.getPieces();
 
         System.out.println("  a b c d e f g h");
@@ -45,15 +45,17 @@ public class GUI {
 
                 if(possibleMoves[i][j]) {
                     if (piece != null) {
-                        System.out.print(ANSI_BLUE_BACKGROUND + piece + " " + ANSI_RESET);
+                        System.out.print(ANSI_BLUE_BACKGROUND + piece + ANSI_RESET);
+                        System.out.print("-");
                     } else {
                         System.out.print(ANSI_BLUE_BACKGROUND + " " + ANSI_RESET);
+                        System.out.print("-");
                     }
                 } else {
                     if (piece != null) {
-                        System.out.print(piece + " ");
+                        System.out.print(piece + "-");
                     } else {
-                        System.out.print("  ");
+                        System.out.print(" -");
                     }
                 }
             }

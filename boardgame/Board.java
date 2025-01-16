@@ -39,4 +39,11 @@ public class Board {
         System.out.println(pos.getRow() + " " + pos.getColumn());
         return getPiece(pos);
     }
+
+    public boolean isValidPosition(Position position) {
+        int row = position.getRow();
+        int column = position.getColumn();
+
+        return row >= 0 && row < 8 && column >= 0 && column < 8;
+    }
 }

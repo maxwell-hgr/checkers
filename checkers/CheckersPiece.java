@@ -4,11 +4,13 @@ import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CheckersPiece extends Piece {
     private Color color;
     private boolean checker;
+    private List<Attack> attacks = new ArrayList<>();
 
     public CheckersPiece(Color color) {
         this.color = color;
@@ -30,88 +32,99 @@ public class CheckersPiece extends Piece {
         this.checker = checker;
     }
 
-    public boolean[][] simpleMoves(Board board){
+    public boolean[][] possibleMoves(Board board) {
         boolean[][] possibleMoves = new boolean[8][8];
 
-        int pieceRow = this.getPosition().getRow();
-        int pieceColumn = this.getPosition().getColumn();
 
-
-        if(this.isChecker()){
-            Position p1 = new Position(pieceRow - 1 , pieceColumn - 1);
-            Position p2 = new Position(pieceRow + 1 , pieceColumn - 1);
-            Position p3 = new Position(pieceRow - 1 , pieceColumn + 1);
-            Position p4 = new Position(pieceRow + 1 , pieceColumn + 1);
-
-            Position[] positions = new Position[]{p1,p2,p3,p4};
-
-            for (Position position : positions) {
-                if(isInvalidPosition(position)){
-                    continue;
-                }
-                iterator(possibleMoves, position, board, this.color);
-            }
-        } else {
-            Map<Position, Position> positionMap = new HashMap<>();
-            positionMap.put(
-                    new Position(pieceRow - 1, pieceColumn - 1),
-                    new Position(pieceRow - 2, pieceColumn - 2)
-            );
-            positionMap.put(
-                    new Position(pieceRow + 1, pieceColumn - 1),
-                    new Position(pieceRow + 2, pieceColumn - 2)
-            );
-            positionMap.put(
-                    new Position(pieceRow - 1, pieceColumn + 1),
-                    new Position(pieceRow - 2, pieceColumn + 2)
-            );
-            positionMap.put(
-                    new Position(pieceRow + 1, pieceColumn + 1),
-                    new Position(pieceRow + 2, pieceColumn + 2)
-            );
-
-            for(Position position : positionMap.keySet()){
-                if(isInvalidPosition(position)){
-                    continue;
-                }
-
-                System.out.println(position.getRow() + " " + position.getColumn());
-
-                CheckersPiece checkersPiece = (CheckersPiece) board.getPiece(position);
-                if(checkersPiece == null){
-                    possibleMoves[position.getRow()][position.getColumn()] = true;
-                } else {
-                    if(checkersPiece.getColor() == this.color){
-                        continue;
-                    }
-                    possibleMoves[positionMap.get(position).getRow()][position.getColumn()] = true;
-                }
-            }
-
+        if (this.color == Color.BLACK) {
+            System.out.println(1);
+            int[][] directions = {{-1, -1}, {-1, 1}};
+            possibleMoves = simpleMoves(directions, board);
         }
+        if (this.color == Color.WHITE) {
+            int[][] directions = {{1, -1}, {1, 1}};
+            possibleMoves = simpleMoves(directions, board);
+        }
+        if (this.isChecker()) {
+            int[][] directions = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+            possibleMoves = simpleMoves(directions, board);
+        }
+
         return possibleMoves;
     }
 
-    private static void iterator(boolean[][] moves, Position position, Board board, Color color){
-        for(int i = 0; i < 8; i++){
-            if(board.getPiece(position) == null){
-                moves[position.getRow()][position.getColumn()] = true;
+    private boolean[][] simpleMoves(int[][] directions, Board board) {
+        boolean[][] possibleMoves = new boolean[8][8];
+
+        outerloop:
+        for (int[] direction : directions) {
+            int rowIncrement = direction[0];
+            int columnIncrement = direction[1];
+
+            int row = this.getPosition().getRow() + rowIncrement;
+            int col = this.getPosition().getColumn() + columnIncrement;
+
+            Position pos = new Position(row, col);
+            System.out.println(pos.getRow() + " " + pos.getColumn());
+            Attack attack = new Attack();
+
+            if (this.isChecker()) {
+                boolean enemyPieceFound = false;
+
+                while (board.isValidPosition(pos)) {
+                    if (board.getPiece(pos) != null) {
+                        CheckersPiece piece = (CheckersPiece) board.getPiece(pos);
+                        if (piece.getColor() == this.getColor()){
+                            continue outerloop;
+                        } else {
+                            if(!enemyPieceFound){
+                                attack.setPiece(piece);
+
+                                row += rowIncrement;
+                                col += columnIncrement;
+                                pos = new Position(row, col);
+
+                                if(board.getPiece(pos) == null){
+                                    enemyPieceFound = true;
+                                    continue;
+                                } else {
+                                    continue outerloop;
+                                }
+                            } else {
+                                continue outerloop;
+                            }
+                        }
+                    }
+                    if(enemyPieceFound){
+                        attack.getPositions().add(pos);
+                    }
+
+                    possibleMoves[pos.getRow()][pos.getColumn()] = true;
+
+                    row += rowIncrement;
+                    col += columnIncrement;
+                    pos = new Position(row, col);
+                }
             } else {
-                CheckersPiece checkersPiece = (CheckersPiece) board.getPiece(position);
-                if(checkersPiece.getColor() != color){
-                    moves[position.getRow()][position.getColumn()] = false;
+                if (!board.isValidPosition(pos)) continue;
+
+                if (board.getPiece(pos) != null) {
+                    CheckersPiece piece = (CheckersPiece) board.getPiece(pos);
+
+                    if (piece.getColor() == this.getColor()) continue;
+
+                    Position nextPos = new Position(row + rowIncrement, col + columnIncrement);
+                    if (board.isValidPosition(nextPos) && board.getPiece(nextPos) == null) {
+                        possibleMoves[nextPos.getRow()][nextPos.getColumn()] = true;
+                    }
                 } else {
-                    break;
+                    System.out.println(2);
+                    possibleMoves[pos.getRow()][pos.getColumn()] = true;
                 }
             }
+            attacks.add(attack);
         }
-    }
-
-    private boolean isInvalidPosition(Position position){
-        int row = position.getRow();
-        int column = position.getColumn();
-
-        return row < 0 || row >= 8 || column < 0 || column >= 8;
+        return possibleMoves;
     }
 
     @Override
