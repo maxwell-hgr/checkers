@@ -17,6 +17,24 @@ public class CheckersMatch {
         return this.board;
     }
 
+    public Piece getOriginPiece(String string) {
+        Position position = board.coordinateToPosition(string);
+        return board.getPiece(position);
+    }
+
+    public void movePiece(CheckersPiece piece, String string) {
+        Position origin = piece.getPosition();
+        Position position = board.coordinateToPosition(string);
+        boolean[][] possibleMoves = piece.possibleMoves(this.board);
+
+        if(possibleMoves[position.getRow()][position.getColumn()]) {
+            board.placePiece(position, piece);
+            board.clearPosition(origin);
+        } else {
+            System.out.println("Invalid move");
+        }
+    }
+
 
     private void startGame(Board board) {
         placeNewPiece(0,1, new CheckersPiece(Color.WHITE));

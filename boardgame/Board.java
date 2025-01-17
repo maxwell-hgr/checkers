@@ -32,12 +32,10 @@ public class Board {
         this.pieces = pieces;
     }
 
-    public Piece getPieceWithString(String coordinate) {
+    public Position coordinateToPosition(String coordinate) {
         char col = coordinate.charAt(0);
         int row = Integer.parseInt(coordinate.substring(1));
-        Position pos = new Position(8 - row, col - 'a');
-        System.out.println(pos.getRow() + " " + pos.getColumn());
-        return getPiece(pos);
+        return new Position(8 - row, col - 'a');
     }
 
     public boolean isValidPosition(Position position) {

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CheckersPiece extends Piece {
-    private Color color;
+    private final Color color;
     private boolean checker;
-    private List<Attack> attacks = new ArrayList<>();
+    private final List<Attack> attacks = new ArrayList<>();
 
     public CheckersPiece(Color color) {
         this.color = color;
@@ -20,8 +20,8 @@ public class CheckersPiece extends Piece {
         return color;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
+    public List<Attack> getAttacks() {
+        return attacks;
     }
 
     public boolean isChecker() {
@@ -68,9 +68,8 @@ public class CheckersPiece extends Piece {
             System.out.println(pos.getRow() + " " + pos.getColumn());
             Attack attack = new Attack();
 
+            boolean enemyPieceFound = false;
             if (this.isChecker()) {
-                boolean enemyPieceFound = false;
-
                 while (board.isValidPosition(pos)) {
                     if (board.getPiece(pos) != null) {
                         CheckersPiece piece = (CheckersPiece) board.getPiece(pos);
@@ -111,20 +110,31 @@ public class CheckersPiece extends Piece {
                 if (board.getPiece(pos) != null) {
                     CheckersPiece piece = (CheckersPiece) board.getPiece(pos);
 
-                    if (piece.getColor() == this.getColor()) continue;
-
-                    Position nextPos = new Position(row + rowIncrement, col + columnIncrement);
-                    if (board.isValidPosition(nextPos) && board.getPiece(nextPos) == null) {
-                        possibleMoves[nextPos.getRow()][nextPos.getColumn()] = true;
+                    if (piece.getColor() == this.getColor()){
+                        continue;
+                    } else {
+                        attack.setPiece(piece);
+                        Position nextPos = new Position(row + rowIncrement, col + columnIncrement);
+                        if (board.isValidPosition(nextPos) && board.getPiece(nextPos) == null) {
+                            possibleMoves[nextPos.getRow()][nextPos.getColumn()] = true;
+                            attack.getPositions().add(nextPos);
+                        }
                     }
                 } else {
                     System.out.println(2);
                     possibleMoves[pos.getRow()][pos.getColumn()] = true;
                 }
             }
-            attacks.add(attack);
+            if(isValidAttack(attack)) attacks.add(attack);
         }
         return possibleMoves;
+    }
+
+    public boolean isValidAttack(Attack attack){
+        if(attack.getPiece() == null){
+            return false;
+        }
+        return !attack.getPositions().isEmpty();
     }
 
     @Override
