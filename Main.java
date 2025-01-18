@@ -11,6 +11,10 @@ public class Main {
 
         GUI.printBoard(checkersMatch.getBoard());
 
+        if(!checkersMatch.playerHaveAttacks().isEmpty()){
+            System.out.println("Player Have Attacks!");
+        }
+
         System.out.println("Type piece coordinates: (a1 - h8)");
         String input = scanner.nextLine();
 
