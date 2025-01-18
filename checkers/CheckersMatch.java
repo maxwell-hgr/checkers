@@ -37,6 +37,22 @@ public class CheckersMatch {
         boolean[][] possibleMoves = piece.possibleMoves(this.board);
 
         if(possibleMoves[destiny.getRow()][destiny.getColumn()]) {
+
+            List<Attack> attacks = piece.getAttacks();
+            if(!attacks.isEmpty()){
+                for(Attack attack : attacks){
+                    for(Position position : attack.getPositions()){
+                        if(position.equals(destiny)){
+                            CheckersPiece attackedPiece = (CheckersPiece) attack.getPiece();
+                            getEnemyPlayer().getPieces().remove(attackedPiece);
+                            board.clearPosition(attackedPiece.getPosition());
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
             board.placePiece(destiny, piece);
             board.clearPosition(origin);
 

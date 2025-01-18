@@ -46,9 +46,5 @@ public class Main {
                 destinyControl = false;
             }
         }
-
-
-        GUI.printBoard(checkersMatch.getBoard());
-
     }
 }
