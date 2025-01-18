@@ -38,6 +38,12 @@ public class Board {
         return new Position(8 - row, col - 'a');
     }
 
+    public String positionToCoordinate(Position position) {
+        int row = 8 - position.getRow();
+        char col = (char) ('a' + position.getColumn());
+        return "" + col + row;
+    }
+
     public boolean isValidPosition(Position position) {
         int row = position.getRow();
         int column = position.getColumn();

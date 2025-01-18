@@ -65,7 +65,6 @@ public class CheckersPiece extends Piece {
             int col = this.getPosition().getColumn() + columnIncrement;
 
             Position pos = new Position(row, col);
-            System.out.println(pos.getRow() + " " + pos.getColumn());
             Attack attack = new Attack();
 
             boolean enemyPieceFound = false;
@@ -121,7 +120,6 @@ public class CheckersPiece extends Piece {
                         }
                     }
                 } else {
-                    System.out.println(2);
                     possibleMoves[pos.getRow()][pos.getColumn()] = true;
                 }
             }

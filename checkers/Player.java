@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    private Color color;
-    private List<Piece> pieces = new ArrayList<Piece>();
+    private final Color color;
+    private final List<Piece> pieces = new ArrayList<Piece>();
 
     public Player(Color color) {
         this.color = color;

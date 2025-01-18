@@ -27,33 +27,24 @@ public class CheckersMatch {
         return board.getPiece(position);
     }
 
-    public List<Position> playerHaveAttacks() {
-        List<Position> attacks = new ArrayList<>();
-        List<Piece> pieces = currentPlayer.getPieces();
 
-        for (Piece piece : pieces) {
-            CheckersPiece checkersPiece = (CheckersPiece) piece;
-            checkersPiece.possibleMoves(board);
 
-            if(!checkersPiece.getAttacks().isEmpty()){
-                attacks.add(checkersPiece.getPosition());
-            }
-        }
-        return attacks;
-    }
-
-    public void movePiece(CheckersPiece piece, String string) {
+    public boolean movePiece(CheckersPiece piece, String string) {
         Position origin = piece.getPosition();
-        Position position = board.coordinateToPosition(string);
+        Position destiny = board.coordinateToPosition(string);
+        if(!board.isValidPosition(destiny)) return false;
+
         boolean[][] possibleMoves = piece.possibleMoves(this.board);
 
-        if(possibleMoves[position.getRow()][position.getColumn()]) {
-            board.placePiece(position, piece);
+        if(possibleMoves[destiny.getRow()][destiny.getColumn()]) {
+            board.placePiece(destiny, piece);
             board.clearPosition(origin);
 
-            changeCurrentPlayer();
+            currentPlayer = getEnemyPlayer();
+            return true;
         } else {
             System.out.println("Invalid move");
+            return false;
         }
     }
 
@@ -100,8 +91,59 @@ public class CheckersMatch {
         player.addPiece(piece);
     }
 
-    private void changeCurrentPlayer() {
-        currentPlayer = this.currentPlayer.getColor() == Color.BLACK ?
+    private Player getEnemyPlayer() {
+        return this.currentPlayer.getColor() == Color.BLACK ?
                     players[0] : players[1];
+    }
+
+    private boolean checkEndGame(){
+        return getEnemyPlayer().getPieces().isEmpty();
+    }
+
+    public List<Position> playerAttacks() {
+        List<Position> attacks = new ArrayList<>();
+        List<Piece> pieces = currentPlayer.getPieces();
+
+        for (Piece piece : pieces) {
+            CheckersPiece checkersPiece = (CheckersPiece) piece;
+            checkersPiece.possibleMoves(board);
+
+            if(!checkersPiece.getAttacks().isEmpty()){
+                attacks.add(checkersPiece.getPosition());
+            }
+        }
+        return attacks;
+    }
+
+    public String attackPiecesCoordinates(){
+        List<Position> attacks = playerAttacks();
+
+        StringBuilder attacksString = new StringBuilder();
+        for(Position p : attacks){
+            String coordinate = board.positionToCoordinate(p);
+            attacksString.append(coordinate).append(" - ");
+        }
+        return attacksString.toString();
+    }
+
+    public boolean isAttackPiece(String coordinate){
+        Position position = board.coordinateToPosition(coordinate);
+
+        for(Position p : playerAttacks()){
+            if(p.equals(position)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean invalidOrigin(String coordinate) {
+        Position origin = board.coordinateToPosition(coordinate);
+        if(!board.isValidPosition(origin)) return true;
+        CheckersPiece checkersPiece = (CheckersPiece) board.getPiece(origin);
+        if(checkersPiece == null){
+            return true;
+        }
+        return checkersPiece.getColor() != currentPlayer.getColor();
     }
 }
