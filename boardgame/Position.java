@@ -24,4 +24,17 @@ public class Position {
     public void setRow(int row) {
         this.row = row;
     }
+
+    @Override
+    public String toString() {
+        return "Position [column=" + column + ", row=" + row + "]";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Position p) {
+            return p.row == this.row && p.column == this.column;
+        }
+        return false;
+    }
 }

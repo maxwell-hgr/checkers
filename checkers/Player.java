@@ -24,4 +24,9 @@ public class Player {
     public List<Piece> getPieces() {
         return pieces;
     }
+
+    @Override
+    public String toString() {
+        return color == Color.WHITE ? "White" : "Black";
+    }
 }

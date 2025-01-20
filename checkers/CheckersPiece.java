@@ -37,7 +37,6 @@ public class CheckersPiece extends Piece {
 
 
         if (this.color == Color.BLACK) {
-            System.out.println(1);
             int[][] directions = {{-1, -1}, {-1, 1}};
             possibleMoves = simpleMoves(directions, board);
         }
@@ -132,7 +131,16 @@ public class CheckersPiece extends Piece {
         if(attack.getPiece() == null){
             return false;
         }
-        return !attack.getPositions().isEmpty();
+        if(attack.getPositions().isEmpty()){
+            return false;
+        } else {
+            for(Attack att : attacks){
+                if(att.equals(attack)){
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     @Override

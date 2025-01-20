@@ -22,6 +22,14 @@ public class CheckersMatch {
         return this.board;
     }
 
+    public Player getCurrentPlayer() {
+        return this.currentPlayer;
+    }
+
+    public void changeCurrentPlayer() {
+        this.currentPlayer = getEnemyPlayer();
+    }
+
     public Piece getOriginPiece(String string) {
         Position position = board.coordinateToPosition(string);
         return board.getPiece(position);
@@ -42,10 +50,21 @@ public class CheckersMatch {
             if(!attacks.isEmpty()){
                 for(Attack attack : attacks){
                     for(Position position : attack.getPositions()){
-                        if(position.equals(destiny)){
+                        if(position.getRow() == destiny.getRow() && position.getColumn() == destiny.getColumn()){
                             CheckersPiece attackedPiece = (CheckersPiece) attack.getPiece();
                             getEnemyPlayer().getPieces().remove(attackedPiece);
+
                             board.clearPosition(attackedPiece.getPosition());
+                            board.clearPosition(origin);
+
+                            board.placePiece(destiny, piece);
+                            piece.setPosition(destiny);
+
+
+                            piece.getAttacks().removeAll(attacks);
+                            piece.possibleMoves(this.board);
+
+
                             return true;
                         }
                     }
@@ -56,7 +75,8 @@ public class CheckersMatch {
             board.placePiece(destiny, piece);
             board.clearPosition(origin);
 
-            currentPlayer = getEnemyPlayer();
+            piece.setPosition(destiny);
+
             return true;
         } else {
             System.out.println("Invalid move");
@@ -112,7 +132,7 @@ public class CheckersMatch {
                     players[0] : players[1];
     }
 
-    private boolean checkEndGame(){
+    public boolean checkEndGame(){
         return getEnemyPlayer().getPieces().isEmpty();
     }
 
@@ -146,7 +166,7 @@ public class CheckersMatch {
         Position position = board.coordinateToPosition(coordinate);
 
         for(Position p : playerAttacks()){
-            if(p.equals(position)){
+            if(p.getRow() == position.getRow() && p.getColumn() == position.getColumn()){
                 return true;
             }
         }
@@ -157,9 +177,19 @@ public class CheckersMatch {
         Position origin = board.coordinateToPosition(coordinate);
         if(!board.isValidPosition(origin)) return true;
         CheckersPiece checkersPiece = (CheckersPiece) board.getPiece(origin);
-        if(checkersPiece == null){
-            return true;
+
+        if(checkersPiece == null) return true;
+
+        if(checkersPiece.getColor() == currentPlayer.getColor()){
+            boolean[][] possibleMoves = checkersPiece.possibleMoves(board);
+            for(boolean[] x : possibleMoves){
+                for (boolean y : x){
+                    if (y) {
+                        return false;
+                    }
+                }
+            }
         }
-        return checkersPiece.getColor() != currentPlayer.getColor();
+        return true;
     }
 }

@@ -4,6 +4,7 @@ import boardgame.Piece;
 import boardgame.Position;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class Attack {
@@ -22,5 +23,32 @@ public class Attack {
 
     public void setPiece(Piece piece) {
         this.piece = piece;
+    }
+
+    @Override
+    public String toString() {
+        return piece.toString() + " " + positions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if(o instanceof Attack){
+            if(((Attack) o).getPiece() != this.getPiece()){
+                return false;
+            } else {
+                List<Position> positions = this.getPositions();
+                List<Position> oPositions = ((Attack) o).getPositions();
+
+                for(Position position : positions){
+                    for(Position oPosition : oPositions){
+                        if(position.equals(oPosition)){
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
