@@ -64,7 +64,15 @@ public class CheckersMatch {
                             piece.getAttacks().removeAll(attacks);
                             piece.possibleMoves(this.board);
 
-
+                            if(piece.getColor() == Color.BLACK){
+                                if(piece.getPosition().getRow() == 0){
+                                    piece.setChecker(true);
+                                }
+                            } else {
+                                if(piece.getPosition().getRow() == 7){
+                                    piece.setChecker(true);
+                                }
+                            }
                             return true;
                         }
                     }
