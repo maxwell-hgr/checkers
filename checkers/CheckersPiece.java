@@ -3,9 +3,13 @@ package checkers;
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
+import util.Attack;
+import util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static util.Util.simpleMoves;
 
 public class CheckersPiece extends Piece {
     private final Color color;
@@ -35,112 +39,20 @@ public class CheckersPiece extends Piece {
     public boolean[][] possibleMoves(Board board) {
         boolean[][] possibleMoves = new boolean[8][8];
 
-
         if (this.color == Color.BLACK) {
             int[][] directions = {{-1, -1}, {-1, 1}};
-            possibleMoves = simpleMoves(directions, board);
+            possibleMoves = simpleMoves(this, directions, board);
         }
         if (this.color == Color.WHITE) {
             int[][] directions = {{1, -1}, {1, 1}};
-            possibleMoves = simpleMoves(directions, board);
+            possibleMoves = simpleMoves(this, directions, board);
         }
         if (this.isChecker()) {
             int[][] directions = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-            possibleMoves = simpleMoves(directions, board);
+            possibleMoves = simpleMoves(this, directions, board);
         }
 
         return possibleMoves;
-    }
-
-    private boolean[][] simpleMoves(int[][] directions, Board board) {
-        boolean[][] possibleMoves = new boolean[8][8];
-
-        outerloop:
-        for (int[] direction : directions) {
-            int rowIncrement = direction[0];
-            int columnIncrement = direction[1];
-
-            int row = this.getPosition().getRow() + rowIncrement;
-            int col = this.getPosition().getColumn() + columnIncrement;
-
-            Position pos = new Position(row, col);
-            Attack attack = new Attack();
-
-            boolean enemyPieceFound = false;
-            if (this.isChecker()) {
-                while (board.isValidPosition(pos)) {
-                    if (board.getPiece(pos) != null) {
-                        CheckersPiece piece = (CheckersPiece) board.getPiece(pos);
-                        if (piece.getColor() == this.getColor()){
-                            continue outerloop;
-                        } else {
-                            if(!enemyPieceFound){
-                                attack.setPiece(piece);
-
-                                row += rowIncrement;
-                                col += columnIncrement;
-                                pos = new Position(row, col);
-
-                                if(board.getPiece(pos) == null){
-                                    enemyPieceFound = true;
-                                    continue;
-                                } else {
-                                    continue outerloop;
-                                }
-                            } else {
-                                continue outerloop;
-                            }
-                        }
-                    }
-                    if(enemyPieceFound){
-                        attack.getPositions().add(pos);
-                    }
-
-                    possibleMoves[pos.getRow()][pos.getColumn()] = true;
-
-                    row += rowIncrement;
-                    col += columnIncrement;
-                    pos = new Position(row, col);
-                }
-            } else {
-                if (!board.isValidPosition(pos)) continue;
-
-                if (board.getPiece(pos) != null) {
-                    CheckersPiece piece = (CheckersPiece) board.getPiece(pos);
-
-                    if (piece.getColor() == this.getColor()){
-                        continue;
-                    } else {
-                        attack.setPiece(piece);
-                        Position nextPos = new Position(row + rowIncrement, col + columnIncrement);
-                        if (board.isValidPosition(nextPos) && board.getPiece(nextPos) == null) {
-                            possibleMoves[nextPos.getRow()][nextPos.getColumn()] = true;
-                            attack.getPositions().add(nextPos);
-                        }
-                    }
-                } else {
-                    possibleMoves[pos.getRow()][pos.getColumn()] = true;
-                }
-            }
-            if(isValidAttack(attack)) attacks.add(attack);
-        }
-        return possibleMoves;
-    }
-
-    public boolean isValidAttack(Attack attack){
-        if(attack.getPiece() == null){
-            return false;
-        }
-        if(attack.getPositions().isEmpty()){
-            return false;
-        } else {
-            for(Attack att : attacks){
-                if(att.equals(attack)){
-                    return false;
-                }
-            }
-            return true;
-        }
     }
 
     @Override

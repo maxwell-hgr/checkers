@@ -1,6 +1,7 @@
-package checkers;
+package util;
 
 import boardgame.Piece;
+import checkers.Color;
 
 import java.util.ArrayList;
 import java.util.List;

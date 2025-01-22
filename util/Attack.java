@@ -1,10 +1,9 @@
-package checkers;
+package util;
 
 import boardgame.Piece;
 import boardgame.Position;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class Attack {

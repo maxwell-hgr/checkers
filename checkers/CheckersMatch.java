@@ -3,6 +3,8 @@ package checkers;
 import boardgame.Board;
 import boardgame.Piece;
 import boardgame.Position;
+import util.Attack;
+import util.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +36,6 @@ public class CheckersMatch {
         Position position = board.coordinateToPosition(string);
         return board.getPiece(position);
     }
-
-
 
     public boolean movePiece(CheckersPiece piece, String string) {
         Position origin = piece.getPosition();
